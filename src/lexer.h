@@ -20,10 +20,10 @@
 	X(";", SEMICOLON) \
 	X("=", EQUAL) \
 	X("#", NOT_EQUAL) \
-	X("<", LESS) \
 	X("<=", LESS_OR_EQUAL) \
-	X(">", GREATER) \
+	X("<", LESS) \
 	X(">=", GREATER_OR_EQUAL) \
+	X(">", GREATER) \
 	X("+", ADD) \
 	X("-", SUB) \
 	X("*", MUL) \

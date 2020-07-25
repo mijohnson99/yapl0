@@ -316,7 +316,7 @@ AST_Node *condition(void)
 		AST_Node *lhs = expression();
 
 		Symbol op = (Symbol)0;
-		for (Symbol i = EQUAL; i <= GREATER_OR_EQUAL; i++) {
+		for (Symbol i = EQUAL; i <= GREATER; i++) {
 			if (accept(i)) {
 				op = i;
 				break;
