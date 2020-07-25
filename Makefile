@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -O0 -g
+CFLAGS = -O0 -g -Wall -Wextra
 
 ALL = lextest parsetest compiletest
 

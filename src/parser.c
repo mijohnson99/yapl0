@@ -355,7 +355,7 @@ AST_Node *expression(void)
 		AST_Node *z = new_number(0);
 		AST_Node *t = term();
 		e = new_node(SUB);
-		add_child(e, 0);
+		add_child(e, z);
 		add_child(e, t);
 	} else {
 		e = term();
