@@ -38,13 +38,17 @@ void compile_node(AST_Node *n)
 		compile_node(n->sub[1]->sub[3]); // Block statement
 		printf("\tret\n");
 		break;
+	case ODD:
+		compile_node(n->sub[0]);
+		printf("\todd\n");
+		break;
 	case CALL:
 		printf("\tcall\t%s\n", n->sub[0]->val.ident);
 		break;
 	case IF:
 		printf(".if:");
 		compile_node(n->sub[0]);
-		printf("\tjz\t.end\n");
+		printf("\tjz\t.then\n");
 		compile_node(n->sub[1]);
 		printf(".then:");
 		break;
@@ -55,6 +59,14 @@ void compile_node(AST_Node *n)
 		compile_node(n->sub[1]);
 		printf("\tjmp\t.while\n");
 		printf(".end:");
+		break;
+	case READ:
+		printf("\tread\n");
+		printf("\tset\t%s\n", n->sub[0]->val.ident);
+		break;
+	case WRITE:
+		printf("\tget\t%s\n", n->sub[0]->val.ident);
+		printf("\twrite\n");
 		break;
 	case ASSIGN:
 		compile_node(n->sub[1]);
