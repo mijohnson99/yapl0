@@ -21,3 +21,9 @@ Also, the compiler doesn't do any optimizations yet.
 Fun fact: to practice some embedded software development methodology,
 I made the parser take advantage of region-based memory allocation *very* extensively,
 so the whole tree and all of its contents can be freed all at once just by freeing the root.
+
+#### To-do list:
+* Add better error handling.
+* Improve the lexer stage.
+* Create an intermediate code to compile to/from.
+* Add an optimization stage.
