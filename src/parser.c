@@ -117,7 +117,6 @@ AST_Node *parse(void)
 	AST_Node *prog = program();
 	if (prog) {
 		ret->sub[0] = prog;
-		ret = realloc(ret, parse_zone - parse_start);
 		parse_zone = NULL;
 		return ret;
 	} else {
