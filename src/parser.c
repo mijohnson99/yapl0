@@ -121,7 +121,7 @@ AST_Node *parse(void)
 		parse_zone = NULL;
 		return ret;
 	} else {
-		free(parse_zone);
+		free(parse_start);
 		parse_zone = NULL;
 		return NULL;
 	}
