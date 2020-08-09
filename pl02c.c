@@ -2,7 +2,14 @@
 #include <stdlib.h>
 #include "src/parser.h"
 
-void compile_node(AST_Node *n)
+void newline(int depth)
+{
+	putchar('\n');
+	while (depth --> 0)
+		putchar('\t');
+}
+
+void compile_node(AST_Node *n, int depth)
 {
 	switch (n->type) {
 	case NUMBER:
@@ -12,73 +19,95 @@ void compile_node(AST_Node *n)
 		printf("%s", n->val.ident);
 		break;
 	case VAR:
-		for (int i = 0; i < n->val.count; i++)
-			printf("long int %s;\n",
+		for (int i = 0; i < n->val.count; i++) {
+			newline(depth);
+			printf("long int %s;",
 					n->sub[i]->val.ident);
+		}
 		break;
 	case CONST:
-		for (int i = 0; i < n->val.count; i++)
-			printf("const long int %s = %ld;\n",
+		for (int i = 0; i < n->val.count; i++) {
+			newline(depth);
+			printf("const long int %s = %ld;",
 					n->sub[i]->sub[0]->val.ident,
 					n->sub[i]->sub[1]->val.number);
+		}
 		break;
 	case PROGRAM:
-		printf("#include <stdio.h>\n");
-		compile_node(n->sub[0]->sub[0]); // Consts
-		compile_node(n->sub[0]->sub[1]); // Vars
-		compile_node(n->sub[0]->sub[2]); // Procedures
-		printf("int main()\n{\n");
-		compile_node(n->sub[0]->sub[3]); // Block statement
-		printf("return 0;\n}\n");
+		printf("#include <stdio.h>");
+		compile_node(n->sub[0]->sub[0], depth); // Consts
+		compile_node(n->sub[0]->sub[1], depth); // Vars
+		compile_node(n->sub[0]->sub[2], depth); // Procedures
+		newline(depth);
+		printf("int main()");
+		newline(depth);
+		printf("{");
+		compile_node(n->sub[0]->sub[3], depth+1); // Block statement
+		newline(depth+1);
+		printf("return 0;");
+		newline(depth);
+		printf("}");
+		newline(depth);
 		break;
 	case PROCEDURE:
-		compile_node(n->sub[1]->sub[0]); // Consts
-		compile_node(n->sub[1]->sub[1]); // Vars
-		compile_node(n->sub[1]->sub[2]); // Procedures
-		printf("void pl0_%s(void)\n{\n", n->sub[0]->val.ident);
-		compile_node(n->sub[1]->sub[3]); // Block statement
-		printf("}\n");
+		newline(depth);
+		compile_node(n->sub[1]->sub[0], depth); // Consts
+		compile_node(n->sub[1]->sub[1], depth); // Vars
+		compile_node(n->sub[1]->sub[2], depth); // Procedures
+		newline(depth);
+		printf("void pl0_%s(void)", n->sub[0]->val.ident);
+		newline(depth);
+		printf("{");
+		compile_node(n->sub[1]->sub[3], depth+1); // Block statement
+		newline(depth);
+		printf("}");
 		break;
 	case ODD:
 		printf("(");
-		compile_node(n->sub[0]);
+		compile_node(n->sub[0], depth);
 		printf(")&1");
 		break;
 	case CALL:
-		printf("pl0_%s();\n", n->sub[0]->val.ident);
+		newline(depth);
+		printf("pl0_%s();", n->sub[0]->val.ident);
 		break;
 	case IF:
+		newline(depth);
 		printf("if (");
-		compile_node(n->sub[0]);
-		printf(") {\n");
-		compile_node(n->sub[1]);
-		printf("}\n");
+		compile_node(n->sub[0], depth);
+		printf(") {");
+		compile_node(n->sub[1], depth+1);
+		newline(depth);
+		printf("}");
 		break;
 	case WHILE:
+		newline(depth);
 		printf("while (");
-		compile_node(n->sub[0]);
-		printf(") {\n");
-		compile_node(n->sub[1]);
-		printf("}\n");
+		compile_node(n->sub[0], depth);
+		printf(") {");
+		compile_node(n->sub[1], depth+1);
+		newline(depth);
+		printf("}");
 		break;
 	case READ:
-		printf("scanf(\"%%ld\", &%s);\n", n->sub[0]->val.ident);
+		newline(depth);
+		printf("scanf(\"%%ld\", &%s);", n->sub[0]->val.ident);
 		break;
 	case WRITE:
-		printf("printf(\"%%ld\\n\", %s);\n", n->sub[0]->val.ident);
+		newline(depth);
+		printf("printf(\"%%ld\\n\", %s);", n->sub[0]->val.ident);
 		break;
 	case ASSIGN:
+		newline(depth);
 		printf("%s = ", n->sub[0]->val.ident);
-		compile_node(n->sub[1]);
-		printf(";\n");
+		compile_node(n->sub[1], depth);
+		printf(";");
 		break;
 #define SIMPLE_CASE(OP, STR) \
 	case OP: \
-		printf("("); \
-		compile_node(n->sub[0]); \
-		printf(") "STR" ("); \
-		compile_node(n->sub[1]); \
-		printf(")"); \
+		compile_node(n->sub[0], depth); \
+		printf(" "STR" "); \
+		compile_node(n->sub[1], depth); \
 		break
 	SIMPLE_CASE(ADD, "+");
 	SIMPLE_CASE(SUB, "-");
@@ -92,16 +121,17 @@ void compile_node(AST_Node *n)
 	SIMPLE_CASE(GREATER_OR_EQUAL, ">=");
 	default:
 		for (int i = 0; i < n->val.count; i++)
-			compile_node(n->sub[i]);
+			compile_node(n->sub[i], depth);
 	}
 }
+#define compile_program(X) compile_node(X, 0)
 
 int main()
 {
 	input_stream = stdin;
 	AST_Node *prog = parse();
 	if (prog) {
-		compile_node(prog);
+		compile_program(prog);
 		free(prog);
 	} else {
 		printf("Parser encountered an error\n");
