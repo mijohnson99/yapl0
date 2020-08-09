@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -O0 -g -Wall -Wextra
 
-ALL = lextest parsetest compiletest
+ALL = lextest parsetest compiletest pl02c
 
 all: $(ALL)
 
@@ -22,6 +22,12 @@ compiletest: compiletest.o parser.o lexer.o
 	$(CC) $^ -o $@
 
 compiletest.o: compiletest.c
+	$(CC) $(CFLAGS) $^ -c -o $@
+
+pl02c: pl02c.o parser.o lexer.o
+	$(CC) $^ -o $@
+
+pl02c.o: pl02c.c
 	$(CC) $(CFLAGS) $^ -c -o $@
 
 
