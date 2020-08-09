@@ -39,6 +39,7 @@ void compile_node(AST_Node *n, int depth)
 		compile_node(n->sub[0]->sub[1], depth); // Vars
 		compile_node(n->sub[0]->sub[2], depth); // Procedures
 		newline(depth);
+		newline(depth);
 		printf("int main()");
 		newline(depth);
 		printf("{");
