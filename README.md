@@ -3,7 +3,8 @@
 
 I made this for two reasons:
 * One of my strongest interests in all of computer science is compiler design.
-* It seems my university will likely not offer the Compiler Design course in my upcoming senior year.
+* ~~It seems my university will likely not offer the Compiler Design course in my upcoming senior year.~~
+  * Turns out they are; I'm signed up for it :)
 
 So, this is just an educational thing for me, but it turned out pretty well, so I'm putting it here.
 
